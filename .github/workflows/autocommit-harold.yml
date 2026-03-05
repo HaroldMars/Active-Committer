@@ -2,7 +2,7 @@ name: Harolds Auto Commit
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "*/5 * * * *"
 
 jobs:
   commit:
