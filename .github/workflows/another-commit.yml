@@ -1,0 +1,127 @@
+name: Auto Commit
+on:
+  schedule:
+    - cron: "0 * * * *" 
+
+permissions:
+  contents: write
+
+jobs:
+  commit-user1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto Commit Loop - User 1
+        run: |
+          set -e
+          FILE="files/user1/README.md"
+          COMMIT_LOOP_COUNT=5
+
+          echo "Configuring Git..."
+          git config --global user.name "$USERNAME"
+          git config --global user.email "$EMAIL"
+
+          for ((i=1; i<=COMMIT_LOOP_COUNT; i++)); do
+            echo "Iteration $i of $COMMIT_LOOP_COUNT"
+
+            if [ ! -f "$FILE" ]; then
+              echo "File not found, creating $FILE..."
+              mkdir -p "$(dirname $FILE)"
+              echo "# Git Auto Commit | User 1" > "$FILE"
+              echo "This file was added $(date +"%b %d, %Y")" >> "$FILE"
+              echo "" >> "$FILE"
+              echo "Just for fun and keeping my daily git commit active 🤪" >> "$FILE"
+              echo "" >> "$FILE"
+              echo "commit number: 1" >> "$FILE"
+              CURRENT=1
+            else
+              echo "File exists. Updating commit number..."
+              CURRENT=$(grep -oP 'commit number: \K\d+' "$FILE" || echo "0")
+              NEXT=$((CURRENT + 1))
+              sed -i "/commit number: /c\commit number: $NEXT" "$FILE"
+              CURRENT=$NEXT
+              echo "Updated commit number to: $CURRENT"
+            fi
+
+            git add "$FILE"
+            git commit -m "Auto commit #$CURRENT : target - ($FILE)"
+            echo "Committed #$CURRENT"
+          done
+
+          echo "Pulling latest changes before push..."
+          git pull --rebase origin main
+
+          echo "Pushing User 1 commits..."
+          git push origin main
+
+          echo "User 1 commits completed!"
+        shell: bash
+        env:
+          USERNAME: ${{ secrets.USERNAME_1 }}
+          EMAIL: ${{ secrets.EMAIL_1 }}
+
+  commit-user2:
+    runs-on: ubuntu-latest
+    needs: commit-user1   # waits for user1 to finish before running — prevents race condition
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto Commit Loop - User 2
+        run: |
+          set -e
+          FILE="files/user2/README.md"
+          COMMIT_LOOP_COUNT=200
+
+          echo "Configuring Git..."
+          git config --global user.name "$USERNAME"
+          git config --global user.email "$EMAIL"
+
+          for ((i=1; i<=COMMIT_LOOP_COUNT; i++)); do
+            echo "Iteration $i of $COMMIT_LOOP_COUNT"
+
+            if [ ! -f "$FILE" ]; then
+              echo "File not found, creating $FILE..."
+              mkdir -p "$(dirname $FILE)"
+              echo "# Git Auto Commit | User 2" > "$FILE"
+              echo "This file was added $(date +"%b %d, %Y")" >> "$FILE"
+              echo "" >> "$FILE"
+              echo "Just for fun and keeping my daily git commit active 🤪" >> "$FILE"
+              echo "" >> "$FILE"
+              echo "commit number: 1" >> "$FILE"
+              CURRENT=1
+            else
+              echo "File exists. Updating commit number..."
+              CURRENT=$(grep -oP 'commit number: \K\d+' "$FILE" || echo "0")
+              NEXT=$((CURRENT + 1))
+              sed -i "/commit number: /c\commit number: $NEXT" "$FILE"
+              CURRENT=$NEXT
+              echo "Updated commit number to: $CURRENT"
+            fi
+
+            git add "$FILE"
+            git commit -m "Auto commit #$CURRENT : target - ($FILE)"
+            echo "Committed #$CURRENT"
+          done
+
+          echo "Pulling latest changes before push..."
+          git pull --rebase origin main
+
+          echo "Pushing User 2 commits..."
+          git push origin main
+
+          echo "User 2 commits completed!"
+        shell: bash
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          EMAIL: ${{ secrets.EMAIL }}
