@@ -1,4 +1,4 @@
-name: Another wf
+name: Another workflow
 
 on:
   schedule:
