@@ -1,4 +1,4 @@
-name: Dup Auto Commit
+name: Another wf
 
 on:
   schedule:
@@ -20,7 +20,7 @@ jobs:
       - name: Loop Commit Updates
         run: |
           set -e
-          
+
           FILES=("files/README_1.md")  # List of files to update
           COMMIT_LOOP_COUNT=5
 
