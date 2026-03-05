@@ -22,7 +22,7 @@ jobs:
           set -e
           
           FILES=("README_1.md")  # List of files to update
-          COMMIT_LOOP_COUNT=1
+          COMMIT_LOOP_COUNT=5
 
           echo "Configuring Git..."
           git config --global user.name "$USERNAME"
