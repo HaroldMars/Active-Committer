@@ -1,4 +1,4 @@
-name: HaroldMars Auto Commit
+name: Dup Auto Commit
 
 on:
   schedule:
@@ -21,7 +21,7 @@ jobs:
         run: |
           set -e
           
-          FILES=("README_1.md")  # List of files to update
+          FILES=("files/README_1.md")  # List of files to update
           COMMIT_LOOP_COUNT=5
 
           echo "Configuring Git..."
