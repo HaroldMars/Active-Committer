@@ -1,7 +1,7 @@
 name: Another Auto Commit
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 * * * *"
 jobs:
   commit:
     runs-on: ubuntu-latest
@@ -16,7 +16,7 @@ jobs:
         run: |
           set -e
           FILE="files/README_1.md"
-          COMMIT_LOOP_COUNT=15
+          COMMIT_LOOP_COUNT=2
 
           echo "Configuring Git..."
           git config --global user.name "$USERNAME"
