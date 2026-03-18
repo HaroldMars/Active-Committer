@@ -1,0 +1,74 @@
+name: Weekly Squash History
+on:
+  schedule:
+    - cron: "0 1 * * 0"  # Every Sunday at 1:00 AM UTC
+jobs:
+  squash-user1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout User1 Branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: user1-commits
+
+      - name: Squash User1 History
+        run: |
+          set -e
+          echo "Configuring Git for User 1..."
+          git config --global user.name "$USERNAME"
+          git config --global user.email "$EMAIL"
+
+          echo "Getting root commit..."
+          ROOT=$(git rev-list --max-parents=0 HEAD)
+          echo "Root commit: $ROOT"
+
+          echo "Soft resetting to root..."
+          git reset --soft $ROOT
+
+          echo "Squashing all commits into one..."
+          git commit --amend -m "squashed: weekly cleanup $(date +'%Y-%m-%d') - user1"
+
+          echo "Force pushing squashed history..."
+          git push --force
+
+          echo "User1 squash completed!"
+        shell: bash
+        env:
+          USERNAME: ${{ secrets.USERNAME_1 }}
+          EMAIL: ${{ secrets.EMAIL_1 }}
+
+  squash-user2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout User2 Branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: user2-commits
+
+      - name: Squash User2 History
+        run: |
+          set -e
+          echo "Configuring Git for User 2..."
+          git config --global user.name "$USERNAME"
+          git config --global user.email "$EMAIL"
+
+          echo "Getting root commit..."
+          ROOT=$(git rev-list --max-parents=0 HEAD)
+          echo "Root commit: $ROOT"
+
+          echo "Soft resetting to root..."
+          git reset --soft $ROOT
+
+          echo "Squashing all commits into one..."
+          git commit --amend -m "squashed: weekly cleanup $(date +'%Y-%m-%d') - user2"
+
+          echo "Force pushing squashed history..."
+          git push --force
+
+          echo "User2 squash completed!"
+        shell: bash
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          EMAIL: ${{ secrets.EMAIL }}
