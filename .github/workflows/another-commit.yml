@@ -1,7 +1,11 @@
-name: Another Auto Commit
+name: User1 Auto Commit
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 0 * * *"  # 12:00 AM UTC
+
+permissions:
+  contents: write  # Required to push commits
+
 jobs:
   commit:
     runs-on: ubuntu-latest
@@ -11,12 +15,13 @@ jobs:
         with:
           fetch-depth: 0
           ref: user1-commits
+          token: ${{ secrets.GITHUB_TOKEN }}  # Required for push access
 
       - name: Auto Commit Loop
         run: |
           set -e
-          FILE="files/README_1.md"
-          COMMIT_LOOP_COUNT=15
+          FILE="files/user1/README.md"
+          COMMIT_LOOP_COUNT=35
 
           echo "Configuring Git..."
           git config --global user.name "$USERNAME"
@@ -66,10 +71,31 @@ jobs:
           echo "Pulling latest changes..."
           git pull --rebase
 
-          echo "Pushing changes..."
+          echo "Pushing to user1-commits branch..."
           git push --force
 
           echo "All commits completed successfully!"
+        shell: bash
+        env:
+          USERNAME: ${{ secrets.USERNAME_1 }}
+          EMAIL: ${{ secrets.EMAIL_1 }}
+
+      - name: Merge to Main
+        run: |
+          set -e
+          echo "Switching to main branch..."
+          git checkout main
+
+          echo "Pulling latest main..."
+          git pull origin main
+
+          echo "Merging user1-commits into main..."
+          git merge user1-commits --no-ff -m "merge: user1-commits → main ($(date +'%Y-%m-%d'))"
+
+          echo "Pushing main..."
+          git push origin main
+
+          echo "Merge to main completed!"
         shell: bash
         env:
           USERNAME: ${{ secrets.USERNAME_1 }}

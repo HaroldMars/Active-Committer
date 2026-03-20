@@ -2,6 +2,10 @@ name: Weekly Squash History
 on:
   schedule:
     - cron: "0 1 * * 0"  # Every Sunday at 1:00 AM UTC
+
+permissions:
+  contents: write  # Required to force push squashed history
+
 jobs:
   squash-user1:
     runs-on: ubuntu-latest
@@ -11,6 +15,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: user1-commits
+          token: ${{ secrets.GITHUB_TOKEN }}  # Required for push access
 
       - name: Squash User1 History
         run: |
@@ -46,6 +51,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: user2-commits
+          token: ${{ secrets.GITHUB_TOKEN }}  # Required for push access
 
       - name: Squash User2 History
         run: |
